@@ -2,8 +2,10 @@ import React, { useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
 import { AuthContext } from '../context/AuthContext';
+import Layout from '../../common/Layout';
+import AppBarDashboard from '../../common/Layout/AppBarDashboard';
 
-export default ({ component: Component, ...rest }) => {
+export default ({ component: Component, theme, appBar, bottomToolbar, ...rest }) => {
   const { auth } = useContext(AuthContext);
   const { loading } = auth;
 
@@ -17,11 +19,19 @@ export default ({ component: Component, ...rest }) => {
       />
     );
   }
+
   return (
-      <Route
+    <Route
       {...rest}
       render={routeProps =>
-        auth.data ? <Component {...routeProps} /> : <Redirect to="/welcome" />
+        auth.data
+          ? (
+            <Layout theme={theme} bottomToolbar={bottomToolbar} {...(appBar ? { appBar: <AppBarDashboard /> } : {})}>
+              <Component {...routeProps} />
+            </Layout>
+          ) : (
+            <Redirect to="/intro" />
+          )
       }
     />
   );
